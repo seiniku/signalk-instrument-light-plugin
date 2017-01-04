@@ -1,4 +1,4 @@
-const debug = require('debug')('raymarine-autopilot')
+const debug = require('debug')('instrumentlights')
 const Bacon = require('baconjs');
 const util = require('util')
 const _ = require('lodash')

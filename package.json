@@ -1,0 +1,27 @@
+{
+	"name": "signalk-instrument-light-plugin",
+	"version": "0.0.0",
+	"description": "Plugin that controls proprietary instrument lights",
+	"keywords": [
+		"signalk-node-server-plugin"
+	],
+	"homepage": "https://github.com/joabakk/signalk-instrument-light-plugin#readme",
+	"bugs": {
+		"url": "https://github.com/joabakk/signalk-instrument-light-plugin/issues"
+	},
+	"license": "Apache-2.0",
+	"author": "Joachim Bakke",
+	"main": "index.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/joabakk/signalk-instrument-light-plugin.git"
+	},
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"dependencies": {
+		"react": "^15.4.2",
+		"react-jsonschema-form": "^0.41.2",
+		"suncalc": "^1.8.0"
+	}
+}

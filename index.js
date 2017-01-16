@@ -3,6 +3,9 @@ const Bacon = require('baconjs');
 const util = require('util')
 const _ = require('lodash')
 var SunCalc = require('suncalc')
+const signalkSchema = require('signalk-schema')
+const react = require('react/package.json') // react is a peer dependency.
+const rjf = require('react-jsonschema-form')
 
 // Seatalk1:
 const lampOff = "80,00,00"
@@ -25,8 +28,9 @@ module.exports = function(app) {
   plugin.start = function(props) {
     debug("starting...")
     debug("started")
+    isItTime()
   }
-  
+
     plugin.stop = function() {
     debug("stopping")
     if (unsubscribe) {
@@ -34,38 +38,52 @@ module.exports = function(app) {
     }
     debug("stopped")
   }
-  
+
   plugin.id = "instrumentlights"
   plugin.name = "Instrument lights"
-  plugin.description = "Plugin that controls Raymarine Seatalk 1 instrument lights"
+  plugin.description = "Plugin that controls proprietary instrument lights"
 
   plugin.schema = {
     title: "Raymarine Autopilot Control",
     type: "object",
     properties: {
+      Seatalk1: {
+        title: "Seatalk1 instruments",
+        type: "boolean",
+        default: false
+      },
+      FDX: {
+        title: "Silva/Nexus/Garmin instruments (FDX)",
+        type: "boolean",
+        default: false
+      },
       Display_sunsetSunrise: {
-        title: "Display lights on from sunset till sunrise",
-        type: "string",
-              default: "off",
-              "enum": lightLevel
+        title: "Display lights during day (from sunset till sunrise)",
+        type: "number",
+              default: 0,
+              "enum": [0,1,2,3],
+              "enumNames": ["off", "dim", "on", "bright"]
       },
       Display_civil_DuskDawn: {
-        title: "Display lights on from dusk till dawn (civil 6deg below horizon)",
-        type: "string",
-              default: "off",
-              "enum": lightLevel
+        title: "Display lights during civil twilight (0-6 deg below horizon)",
+        type: "number",
+              default: 0,
+              "enum": [0,1,2,3],
+              "enumNames": ["off", "dim", "on", "bright"]
       },
       Display_naut_DuskDawn: {
-        title: "Display lights on from dusk till dawn (nautical 12deg)",
-        type: "string",
-              default: "off",
-              "enum": lightLevel
+        title: "Display lights during nautical twilight (6-12 deg below horizon)",
+        type: "number",
+              default: 0,
+              "enum": [0,1,2,3],
+              "enumNames": ["off", "dim", "on", "bright"]
       },
-      Display_astro_DuskDawn: {
-        title: "Display lights on from dusk till dawn (astronomical 18deg)",
-        type: "string",
-              default: "off",
-              "enum": lightLevel
+      Display_night: {
+        title: "Display lights on during night (sun below 12 deg)",
+        type: "number",
+              default: 0,
+              "enum": [0,1,2,3],
+              "enumNames": ["off", "dim", "on", "bright"]
       },
       }
   }
@@ -73,3 +91,31 @@ module.exports = function(app) {
   return plugin;
 }
 
+function isItTime (option){
+
+  var minutes = 1, the_interval = minutes * 60 * 1000
+  setInterval(function() {
+    debug("I am doing my " + minutes + " minutes check")
+    var now = new Date()
+    var lat = 59.911491
+    var lon = 10.757933
+    var times = SunCalc.getTimes(now, lat, lon)
+    if (times.sunrise < now && times.sunset > now ){
+      //day
+      debug("daytime!")
+    } else if (times.dawn < now || times.dusk > now){
+        if (times.nauticalDawn < now || times.nauticalDusk > now){
+          if (times.nightEnd < now || times.night> now){
+            //night
+            debug("nighttime!")
+          } else {
+            //nautical
+            debug("nautical twilight")
+          }
+        } else {
+          //civil
+          debug("Civil twilight")
+        }
+      }
+  }, the_interval)
+}

@@ -105,7 +105,7 @@ function isItTime (option){
       debug("daytime!")
     } else if (times.dawn < now || times.dusk > now){
         if (times.nauticalDawn < now || times.nauticalDusk > now){
-          if (times.nightEnd < now || times.night> now){
+          if (times.nightEnd > now || times.night < now){
             //night
             debug("nighttime!")
           } else {

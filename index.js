@@ -44,7 +44,8 @@ module.exports = function(app) {
   plugin.description = "Plugin that controls proprietary instrument lights"
 
   plugin.schema = {
-    title: "Raymarine Autopilot Control",
+    title: "Plugin that controls proprietary instrument lights",
+    description: "Current solar altitude is INSERT degrees",
     type: "object",
     properties: {
       Seatalk1: {

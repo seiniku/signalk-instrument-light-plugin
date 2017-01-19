@@ -14,6 +14,7 @@ const seaTalk = ["30,00,00", "30,00,04", "30,00,08", "30,00,0C"]
 
 var refresh
 var altitude
+var myTimer
 
 module.exports = function(app) {
   var unsubscribe = undefined
@@ -25,12 +26,13 @@ module.exports = function(app) {
     isItTime(app, props)
   }
 
+
   plugin.stop = function() {
-    debug("stopping")
+    clearInterval(myTimer)
     if (unsubscribe) {
       unsubscribe()
     }
-    debug("stopped")
+    debug("Stopped")
   }
 
   plugin.id = "instrumentlights"
@@ -100,8 +102,8 @@ module.exports = function(app) {
 function isItTime (app, props){
 
   var minutes = props.UpdateInterval, the_interval = minutes * 60 * 1000
-  setInterval(function() {
-    debug("I am doing my " + minutes + " minutes check")
+  myTimer = setInterval(function() {
+    debug("I am doing my " + minutes + " minutes check, interval ID " + myTimer)
     var now = new Date()
     var position = _.get(app.signalk.self, 'navigation.position')
     lat = position.latitude
@@ -151,6 +153,7 @@ function isItTime (app, props){
     }
   }, the_interval)
 }
+
 
 function toSentence(parts) {
   var base = parts.join(',')

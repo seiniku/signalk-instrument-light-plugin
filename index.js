@@ -103,7 +103,7 @@ function isItTime (app, props){
 
   var minutes = props.UpdateInterval, the_interval = minutes * 60 * 1000
   myTimer = setInterval(function() {
-    debug("I am doing my " + minutes + " minutes check, interval ID " + myTimer)
+    debug("I am doing my " + minutes + " minutes check")
     var now = new Date()
     var position = _.get(app.signalk.self, 'navigation.position')
     lat = position.latitude
@@ -113,36 +113,32 @@ function isItTime (app, props){
 
     altitude = sunrisePos.altitude * 180 / 3.14
 
-    debug(altitude)
-    if (altitude < 0){
+    debug("sun is " + altitude.toFixed(2) + " degrees above horizon")
+    if (altitude > 0){
       debug("day, lights: " + props.Day)
       lightLevel = props.Day
-
-      if (altitude < -6){
-        if (altitude < -12){
-          if (altitude < -18){
-            debug("night, lights: " + props.Night)
-            lightLevel = props.Night
-          } else {
-            debug("astronomical, lights: " + props.Astronomical)
-            lightLevel = props.Astronomical
-          }
+    }
+    else if (altitude < -6){
+      if (altitude < -12){
+        if (altitude < -18){
+          debug("night, lights: " + props.Night)
+          lightLevel = props.Night
         } else {
-          debug("nautical, lights: " + props.Nautical)
-          lightLevel = props.Nautical
+          debug("astronomical dawn/dusk, lights: " + props.Astronomical)
+          lightLevel = props.Astronomical
         }
       } else {
-        debug("civil, lights: " + props.Civil)
-        lightLevel = props.Civil
+        debug("nautical dawn/dusk, lights: " + props.Nautical)
+        lightLevel = props.Nautical
       }
     } else {
-      debug("No period of day found")
+      debug("civil dawn/dusk, lights: " + props.Civil)
+      lightLevel = props.Civil
     }
-    debug("Sending command " + lightLevel + " to instruments")
+
     if (props.Seatalk1){
       seatalkCommand = seaTalk[lightLevel]
 
-      debug("seatalkCommand: " + seatalkCommand)
       nmea0183out = toSentence([
         '$STALK',
         seatalkCommand
@@ -150,6 +146,9 @@ function isItTime (app, props){
 
       debug("nmea0183out: " + nmea0183out)
       app.emit('nmea0183out', nmea0183out)
+    }
+    if (props.FDX) {
+      debug("FDX not implemented")
     }
   }, the_interval)
 }

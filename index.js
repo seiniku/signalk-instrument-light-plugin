@@ -8,8 +8,9 @@ const react = require('react/package.json') // react is a peer dependency.
 const rjf = require('react-jsonschema-form')
 
 // Seatalk1:
-const seaTalk = ["80,00,00", "80,00,04", "80,00,08", "80,00,0C"]
-/*80  00  0X      Set Lamp Intensity: X=0 off, X=4: 1, X=8: 2, X=C: 3*/
+const seaTalk = ["30,00,00", "30,00,04", "30,00,08", "30,00,0C"]
+/*30  00  0X      Set Lamp Intensity: X=0 off, X=4: 1, X=8: 2, X=C: 3*/
+//What is the difference between 30 and 80?
 
 var refresh
 var altitude
@@ -102,7 +103,7 @@ function isItTime (app, props){
   setInterval(function() {
     debug("I am doing my " + minutes + " minutes check")
     var now = new Date()
-    position = _.get(app.signalk.self, 'navigation.position')
+    var position = _.get(app.signalk.self, 'navigation.position')
     lat = position.latitude
     lon = position.longitude
     var sunrisePos = SunCalc.getPosition(new Date(), lat, lon)
@@ -112,6 +113,9 @@ function isItTime (app, props){
 
     debug(altitude)
     if (altitude < 0){
+      debug("day, lights: " + props.Day)
+      lightLevel = props.Day
+
       if (altitude < -6){
         if (altitude < -12){
           if (altitude < -18){
@@ -130,8 +134,7 @@ function isItTime (app, props){
         lightLevel = props.Civil
       }
     } else {
-      debug("day, lights: " + props.Day)
-      lightLevel = props.Day
+      debug("No period of day found")
     }
     debug("Sending command " + lightLevel + " to instruments")
     if (props.Seatalk1){

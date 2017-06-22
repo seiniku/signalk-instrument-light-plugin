@@ -21,7 +21,7 @@
 	},
 	"dependencies": {
 		"react": "^15.4.2",
-		"react-jsonschema-form": "^0.47.0",
+		"react-jsonschema-form": "^0.48.1",
 		"suncalc": "^1.8.0"
 	},
 	"devDependencies": {

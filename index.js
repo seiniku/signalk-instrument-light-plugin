@@ -15,6 +15,8 @@ const seaTalk = ["30,00,00", "30,00,04", "30,00,08", "30,00,0C"]
 var refresh
 var altitude
 var myTimer
+var repeatTimer
+var repeatInterval= 30000 //30 s repeats to ensure command is understood
 
 module.exports = function(app) {
   var unsubscribe = undefined
@@ -29,6 +31,7 @@ module.exports = function(app) {
 
   plugin.stop = function() {
     clearInterval(myTimer)
+    clearInterval(repeatTimer)
     if (unsubscribe) {
       unsubscribe()
     }
@@ -49,7 +52,7 @@ module.exports = function(app) {
         default: false
       },
       FDX: {
-        title: "Silva/Nexus/Garmin instruments (FDX)",
+        title: "Silva/Nexus/Garmin instruments (FDX, not implemented yet)",
         type: "boolean",
         default: false
       },
@@ -136,23 +139,28 @@ function isItTime (app, props){
       lightLevel = props.Civil
     }
 
+    repeat(app, props, lightLevel)
+
+  }, the_interval)
+}
+
+function repeat(app, props, lightLevel){
+  repeatTimer = setInterval(function() {
     if (props.Seatalk1){
       seatalkCommand = seaTalk[lightLevel]
-
       nmea0183out = toSentence([
         '$STALK',
         seatalkCommand
       ]);
-
       debug("nmea0183out: " + nmea0183out)
       app.emit('nmea0183out', nmea0183out)
     }
+
     if (props.FDX) {
       debug("FDX not implemented")
     }
-  }, the_interval)
+  }, repeatInterval)
 }
-
 
 function toSentence(parts) {
   var base = parts.join(',')

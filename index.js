@@ -3,7 +3,7 @@ const Bacon = require('baconjs');
 const util = require('util')
 const _ = require('lodash')
 var SunCalc = require('suncalc')
-const signalkSchema = require('signalk-schema')
+const signalkSchema = require('@signalk/signalk-schema')
 const react = require('react/package.json') // react is a peer dependency.
 const rjf = require('react-jsonschema-form')
 

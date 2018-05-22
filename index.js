@@ -108,7 +108,7 @@ function isItTime (app, props){
   myTimer = setInterval(function() {
     debug("I am doing my " + minutes + " minutes check")
     var now = new Date()
-    var position = _.get(app.signalk.self, 'navigation.position')
+    var position = app.getSelfPath('navigation.position')
     lat = position.latitude
     lon = position.longitude
     var sunrisePos = SunCalc.getPosition(new Date(), lat, lon)
